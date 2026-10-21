@@ -1,11 +1,11 @@
-FROM golang:1.21
+FROM golang:1.25
 WORKDIR /build
 COPY go.mod go.sum .
 RUN go mod download
 COPY main.go main.go
 RUN CGO_ENABLED=0 GOOS=linux go build -o app main.go
 
-FROM debian:bullseye
+FROM debian:bookworm
 WORKDIR /app
 ADD https://github.com/jgraph/drawio-desktop/releases/download/v24.4.0/drawio-amd64-24.4.0.deb drawio.deb
 # install dependencies required for:
@@ -14,7 +14,7 @@ ADD https://github.com/jgraph/drawio-desktop/releases/download/v24.4.0/drawio-am
 # - reading tls
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 xdg-utils libatspi2.0-0 libsecret-1-0 \
-        libgbm-dev libasound-dev xvfb xorg gtk2-engines-pixbuf dbus-x11 xfonts-base xfonts-100dpi xfonts-75dpi xfonts-cyrillic xfonts-scalable \
+        libgbm-dev libasound2-dev xvfb xorg gtk2-engines-pixbuf dbus-x11 xfonts-base xfonts-100dpi xfonts-75dpi fonts-dejavu-core xfonts-scalable \
         ca-certificates && \
     apt-get --fix-broken install && \
     dpkg -i drawio.deb
